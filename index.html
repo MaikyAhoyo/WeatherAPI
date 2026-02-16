@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        min-height: 100vh;
+        background-color: #f7f7f7;
+      }
+    </style>
+  </head>
+  <body class="flex items-center justify-center p-4">
+    <div class="rounded-3xl p-8 w-full max-w-md shadow-2xl">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold mb-6 flex items-center gap-3">
+          <i class="fa-solid fa-cloud-sun text-yellow-300"></i> Weather App
+        </h1>
+
+        <div class="relative group">
+          <input
+            type="text"
+            id="city-input"
+            placeholder="Buscar ciudad..."
+            class="w-full bg-white/20 border border-white/30 rounded-full py-3 px-6 pl-12 placeholder-black/70 outline-none focus:bg-white/30 focus:border-white/50 transition-all shadow-inner"
+          />
+          <button
+            id="search-btn"
+            class="absolute left-4 top-1/2 -translate-y-1/2 transition-colors"
+          >
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </div>
+        <p
+          id="error-message"
+          class="text-red-200 mt-2 text-sm hidden font-medium text-center"
+        ></p>
+      </header>
+
+      <main id="weather-container" class="hidden animate-fade-in space-y-8">
+        <section class="text-center space-y-2">
+          <h2 id="city-name" class="text-4xl font-bold tracking-wide"></h2>
+          <p id="date" class="text-black/50 font-medium text-lg"></p>
+
+          <div class="py-6 flex flex-col items-center justify-center">
+            <img
+              id="weather-icon"
+              src=""
+              alt="icono"
+              class="w-32 h-32 drop-shadow-lg filter mb-2"
+            />
+            <h3 id="temperature" class="text-7xl font-bold ml-4"></h3>
+            <p
+              id="description"
+              class="text-xl capitalize font-medium text-black/50 mt-2"
+            ></p>
+          </div>
+        </section>
+
+        <div class="grid grid-cols-3 gap-2">
+          <div
+            class="bg-white/10 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 hover:bg-white/20 transition-colors"
+          >
+            <i class="fa-solid fa-water text-2xl text-blue-300"></i>
+            <span class="text-sm font-light">Humedad</span>
+            <span id="humidity" class="font-bold text-lg"></span>
+          </div>
+          <div
+            class="bg-white/10 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 hover:bg-white/20 transition-colors"
+          >
+            <i class="fa-solid fa-wind text-2xl text-gray-300"></i>
+            <span class="text-sm font-light">Viento</span>
+            <span id="wind-speed" class="font-bold text-lg"></span>
+          </div>
+          <div
+            class="bg-white/10 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 hover:bg-white/20 transition-colors"
+          >
+            <i class="fa-solid fa-gauge-high text-2xl text-red-300"></i>
+            <span class="text-sm font-light">Presión</span>
+            <span id="pressure" class="font-bold text-lg"></span>
+          </div>
+        </div>
+      </main>
+
+      <div id="loading" class="hidden flex justify-center py-10">
+        <i class="fa-solid fa-spinner fa-spin text-4xl"></i>
+      </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
