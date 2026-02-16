@@ -47,3 +47,16 @@ Permite obtener información meteorológica en tiempo real de cualquier ciudad d
 ```bash
 git clone https://github.com/tu-usuario/weather-app.git
 cd weather-app
+```
+
+### Configura tu API Key
+
+- Regístrate en OpenWeatherMap y obtén una clave gratuita.
+- Crea un archivo config.js.
+- Inserta:
+
+```js
+const config = {
+  apiKey: "API_KEY",
+};
+```
