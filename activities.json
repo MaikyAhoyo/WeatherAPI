@@ -1,0 +1,58 @@
+{
+  "weather_activities": {
+    "Clear": {
+      "day": {
+        "text": "Día soleado",
+        "tasks": [
+          {
+            "activity": "Hacer ejercicio al aire libre",
+            "icon": "fa-person-running"
+          },
+          { "activity": "Organizar un picnic", "icon": "fa-basket-shopping" }
+        ]
+      },
+      "night": {
+        "text": "Noche despejada",
+        "tasks": [
+          { "activity": "Observación de estrellas", "icon": "fa-star" },
+          { "activity": "Caminata nocturna tranquila", "icon": "fa-moon" }
+        ]
+      }
+    },
+    "Rain": {
+      "day": {
+        "text": "Día lluvioso",
+        "tasks": [
+          {
+            "activity": "Ir a un museo o galería",
+            "icon": "fa-building-columns"
+          },
+          { "activity": "Leer en una cafetería", "icon": "fa-coffee" }
+        ]
+      },
+      "night": {
+        "text": "Noche de lluvia",
+        "tasks": [
+          { "activity": "Ver una película de estreno", "icon": "fa-film" },
+          { "activity": "Escuchar música relajante", "icon": "fa-headphones" }
+        ]
+      }
+    },
+    "Clouds": {
+      "day": {
+        "text": "Día nublado",
+        "tasks": [
+          { "activity": "Sesión de fotos urbana", "icon": "fa-camera" },
+          { "activity": "Paseo en bicicleta", "icon": "fa-bicycle" }
+        ]
+      },
+      "night": {
+        "text": "Noche nublada",
+        "tasks": [
+          { "activity": "Cena con amigos", "icon": "fa-utensils" },
+          { "activity": "Noche de juegos de mesa", "icon": "fa-chess-board" }
+        ]
+      }
+    }
+  }
+}

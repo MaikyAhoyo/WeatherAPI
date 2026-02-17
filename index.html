@@ -15,15 +15,11 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      body {
-        min-height: 100vh;
-        background-color: #f7f7f7;
-      }
-    </style>
   </head>
-  <body class="flex items-center justify-center p-4">
-    <div class="rounded-3xl p-8 w-full max-w-md shadow-2xl">
+  <body
+    class="flex items-center justify-center p-4 min-h-screen bg-gradient-to-b from-sky-300 to-indigo-400"
+  >
+    <div class="rounded-3xl p-8 w-full max-w-md shadow-2xl bg-[#FAF9F6]">
       <header class="mb-8">
         <h1 class="text-3xl font-bold mb-6 flex items-center gap-3">
           <i class="fa-solid fa-cloud-sun text-yellow-300"></i> Weather App
@@ -42,6 +38,10 @@
           >
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
+          <ul
+            id="suggestions-list"
+            class="absolute top-full left-0 right-0 bg-[#FAF9F6]/80 backdrop-blur-md rounded-2xl mt-2 overflow-hidden shadow-lg z-50 hidden"
+          ></ul>
         </div>
         <p
           id="error-message"
@@ -59,9 +59,9 @@
               id="weather-icon"
               src=""
               alt="icono"
-              class="w-32 h-32 drop-shadow-lg filter mb-2"
+              class="w-24 h-24 drop-shadow-lg filter mb-2"
             />
-            <h3 id="temperature" class="text-7xl font-bold ml-4"></h3>
+            <h3 id="temperature" class="text-5xl font-bold ml-4"></h3>
             <p
               id="description"
               class="text-xl capitalize font-medium text-black/50 mt-2"
@@ -90,6 +90,24 @@
             <i class="fa-solid fa-gauge-high text-2xl text-red-300"></i>
             <span class="text-sm font-light">Presión</span>
             <span id="pressure" class="font-bold text-lg"></span>
+          </div>
+        </div>
+
+        <div
+          id="activities-section"
+          class="bg-white/10 rounded-3xl p-6 mt-6 border border-white/20"
+        >
+          <h4
+            class="text-sm font-semibold uppercase tracking-wider text-black/40 mb-4 text-center"
+          >
+            Actividades sugeridas
+          </h4>
+          <div id="activities-container" class="flex flex-col gap-4">
+            <div
+              class="flex items-center justify-center text-black/30 italic text-sm"
+            >
+              Cargando recomendaciones...
+            </div>
           </div>
         </div>
       </main>
