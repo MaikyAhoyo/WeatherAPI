@@ -11,6 +11,10 @@ const iconEl = document.getElementById("weather-icon");
 const humidityEl = document.getElementById("humidity");
 const windSpeedEl = document.getElementById("wind-speed");
 const pressureEl = document.getElementById("pressure");
+const forecastSection = document.getElementById("forecast-section");
+const forecastContainer = document.getElementById("forecast-container");
+const activitiesSection = document.getElementById("activities-section");
+const activitiesContainer = document.getElementById("activities-container");
 const suggestionsList = document.getElementById("suggestions-list");
 
 let activitiesData = null;
@@ -107,46 +111,6 @@ function renderSuggestions(cities) {
   suggestionsList.classList.remove("hidden");
 }
 
-async function fetchWeather(lat, lon, name) {
-  const MAX_RETRIES = 3;
-  const RETRY_DELAY = 1000;
-
-  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-    try {
-      loadingIndicator.classList.remove("hidden");
-      weatherContainer.classList.add("hidden");
-      errorMessage.classList.add("hidden");
-
-      const apiKey = config.apiKey;
-      const weatherResponse = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}&lang=es`,
-      );
-
-      if (!weatherResponse.ok) throw new Error("Servidor no disponible");
-
-      const weatherData = await weatherResponse.json();
-      weatherData.name = name;
-
-      updateUI(weatherData);
-      loadingIndicator.classList.add("hidden");
-      weatherContainer.classList.remove("hidden");
-
-      return;
-    } catch (error) {
-      console.warn(`Intento ${attempt} fallido. Reintentando...`);
-
-      if (attempt === MAX_RETRIES) {
-        loadingIndicator.classList.add("hidden");
-        errorMessage.textContent =
-          "No pudimos conectar con el servidor tras varios intentos. Revisa tu conexión.";
-        errorMessage.classList.remove("hidden");
-      } else {
-        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
-      }
-    }
-  }
-}
-
 async function handleSearch(query) {
   try {
     errorMessage.classList.add("hidden");
@@ -156,7 +120,58 @@ async function handleSearch(query) {
   }
 }
 
-function updateUI(data) {
+async function fetchWeather(lat, lon, name) {
+  const MAX_RETRIES = 3;
+  const RETRY_DELAY = 1000;
+
+  loadingIndicator.classList.remove("hidden");
+  weatherContainer.classList.add("hidden");
+  forecastSection.classList.add("hidden");
+  activitiesSection.classList.add("hidden");
+  errorMessage.classList.add("hidden");
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const apiKey = config.apiKey;
+
+      const [weatherRes, forecastRes] = await Promise.all([
+        fetch(
+          `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}&lang=es`,
+        ),
+        fetch(
+          `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}&lang=es`,
+        ),
+      ]);
+
+      if (!weatherRes.ok || !forecastRes.ok)
+        throw new Error("Error en los servidores de clima");
+
+      const weatherData = await weatherRes.json();
+      const forecastData = await forecastRes.json();
+      weatherData.name = name;
+
+      renderWeather(weatherData);
+      renderForecast(forecastData);
+
+      loadingIndicator.classList.add("hidden");
+      weatherContainer.classList.remove("hidden");
+      return;
+    } catch (error) {
+      console.warn(`Intento ${attempt} fallido.`, error);
+
+      if (attempt === MAX_RETRIES) {
+        loadingIndicator.classList.add("hidden");
+        errorMessage.textContent =
+          "Error al cargar los datos climáticos. Revisa tu conexión.";
+        errorMessage.classList.remove("hidden");
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+      }
+    }
+  }
+}
+
+function renderWeather(data) {
   cityNameEl.textContent = `${data.name}, ${data.sys.country}`;
   tempEl.textContent = `${Math.round(data.main.temp)}°`;
   descEl.textContent = data.weather[0].description;
@@ -166,12 +181,44 @@ function updateUI(data) {
 
   iconEl.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
 
-  const now = new Date();
-  const options = { weekday: "long", day: "numeric", month: "long" };
-  dateEl.textContent = now.toLocaleDateString("es-ES", options);
+  renderActivities(data);
+}
 
-  const activitiesContainer = document.getElementById("activities-container");
+function renderForecast(data) {
+  forecastSection.classList.remove("hidden");
 
+  const dailyData = data.list.filter((item) =>
+    item.dt_txt.includes("12:00:00"),
+  );
+
+  forecastContainer.innerHTML = dailyData
+    .map(
+      (item) => `
+    <div class="flex items-center justify-between bg-white/20 p-4 rounded-2xl hover:bg-white/30 transition-all">
+      <div class="flex flex-col">
+        <span class="font-bold capitalize">
+          ${new Date(item.dt * 1000).toLocaleDateString("es-ES", { weekday: "long" })}
+        </span>
+        <span class="text-xs text-black/50">
+          ${new Date(item.dt * 1000).toLocaleDateString("es-ES", { day: "numeric", month: "short" })}
+        </span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span class="text-xl font-bold">${Math.round(item.main.temp)}°</span>
+        <img
+          src="https://openweathermap.org/img/wn/${item.weather[0].icon}.png"
+          alt="icon"
+          class="w-10 h-10"
+        >
+      </div>
+    </div>
+  `,
+    )
+    .join("");
+}
+
+function renderActivities(data) {
   const mainWeather = data.weather[0].main;
   const isDay = data.weather[0].icon.includes("d");
   const timeKey = isDay ? "day" : "night";
@@ -180,6 +227,7 @@ function updateUI(data) {
     activitiesData.weather_activities[mainWeather] ||
     activitiesData.weather_activities["Clear"];
   const selection = currentData[timeKey];
+  activitiesSection.classList.remove("hidden");
 
   activitiesContainer.innerHTML = selection.tasks
     .map(

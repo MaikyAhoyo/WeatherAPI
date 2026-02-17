@@ -16,10 +16,13 @@
     />
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
+
   <body
-    class="flex items-center justify-center p-4 min-h-screen bg-gradient-to-b from-sky-300 to-indigo-400"
+    class="flex flex-col md:flex-row items-center justify-center p-4 min-h-screen gap-6 bg-gradient-to-b from-sky-300 to-indigo-400"
   >
-    <div class="rounded-3xl p-8 w-full max-w-md shadow-2xl bg-[#FAF9F6]">
+    <div
+      class="order-1 md:order-2 rounded-3xl p-8 w-full max-w-md shadow-2xl bg-[#FAF9F6]"
+    >
       <header class="mb-8">
         <h1 class="text-3xl font-bold mb-6 flex items-center gap-3">
           <i class="fa-solid fa-cloud-sun text-yellow-300"></i> Weather App
@@ -92,28 +95,46 @@
             <span id="pressure" class="font-bold text-lg"></span>
           </div>
         </div>
-
-        <div
-          id="activities-section"
-          class="bg-white/10 rounded-3xl p-6 mt-6 border border-white/20"
-        >
-          <h4
-            class="text-sm font-semibold uppercase tracking-wider text-black/40 mb-4 text-center"
-          >
-            Actividades sugeridas
-          </h4>
-          <div id="activities-container" class="flex flex-col gap-4">
-            <div
-              class="flex items-center justify-center text-black/30 italic text-sm"
-            >
-              Cargando recomendaciones...
-            </div>
-          </div>
-        </div>
       </main>
 
       <div id="loading" class="hidden flex justify-center py-10">
         <i class="fa-solid fa-spinner fa-spin text-4xl"></i>
+      </div>
+    </div>
+
+    <div
+      id="forecast-section"
+      class="hidden order-2 md:order-3 rounded-3xl p-8 w-full max-w-md shadow-2xl bg-[#FAF9F6]"
+    >
+      <h4
+        class="font-bold uppercase tracking-wider text-black mb-4 text-center"
+      >
+        Predicción del clima para los próximos 5 días
+      </h4>
+      <div id="forecast-container" class="flex flex-col gap-4">
+        <div
+          class="flex items-center justify-center text-black/30 italic text-sm"
+        >
+          Cargando...
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="activities-section"
+      class="hidden order-3 md:order-1 rounded-3xl p-8 w-full max-w-md shadow-2xl bg-[#FAF9F6]"
+    >
+      <h4
+        class="font-bold uppercase tracking-wider text-black mb-4 text-center"
+      >
+        Actividades sugeridas
+      </h4>
+      <div id="activities-container" class="flex flex-col gap-4">
+        <div
+          class="flex items-center justify-center text-black/30 italic text-sm"
+        >
+          Cargando recomendaciones...
+        </div>
       </div>
     </div>
 
