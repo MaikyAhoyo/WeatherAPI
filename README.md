@@ -45,7 +45,7 @@ Permite obtener información meteorológica en tiempo real de cualquier ciudad d
 ### Clona el repositorio
 
 ```bash
-git clone https://github.com/tu-usuario/weather-app.git
+git clone https://github.com/MaikyAhoyo/WeatherAPI.git
 cd weather-app
 ```
 
@@ -57,6 +57,6 @@ cd weather-app
 
 ```js
 const config = {
-  apiKey: "API_KEY",
+  apiKey: "TU_API_KEY",
 };
 ```
