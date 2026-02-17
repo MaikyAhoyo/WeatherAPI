@@ -135,12 +135,8 @@ async function fetchWeather(lat, lon, name) {
       const apiKey = config.apiKey;
 
       const [weatherRes, forecastRes] = await Promise.all([
-        fetch(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}&lang=es`,
-        ),
-        fetch(
-          `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}&lang=es`,
-        ),
+        fetch(`/api/weather?lat=${lat}&lon=${lon}&type=weather`),
+        fetch(`/api/weather?lat=${lat}&lon=${lon}&type=forecast`),
       ]);
 
       if (!weatherRes.ok || !forecastRes.ok)
