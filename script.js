@@ -132,8 +132,6 @@ async function fetchWeather(lat, lon, name) {
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      const apiKey = config.apiKey;
-
       const [weatherRes, forecastRes] = await Promise.all([
         fetch(`/api/weather?lat=${lat}&lon=${lon}&type=weather`),
         fetch(`/api/weather?lat=${lat}&lon=${lon}&type=forecast`),
