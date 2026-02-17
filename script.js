@@ -69,9 +69,8 @@ async function loadActivities() {
 
 async function fetchSuggestions(query) {
   try {
-    const apiKey = config.apiKey;
     const response = await fetch(
-      `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=5&appid=${apiKey}`,
+      `/api/weather?q=${encodeURIComponent(query)}&type=geo`,
     );
 
     if (!response.ok) throw new Error("Error fetching suggestions");
