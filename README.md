@@ -64,4 +64,4 @@ const config = {
 
 ## URL de la página hosteada
 
-https://weather-f36w173fe-miguel-arroyos-projects.vercel.app
+https://weather-h2i1etsnk-miguel-arroyos-projects.vercel.app
