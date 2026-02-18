@@ -16,7 +16,13 @@ const forecastContainer = document.getElementById("forecast-container");
 const activitiesSection = document.getElementById("activities-section");
 const activitiesContainer = document.getElementById("activities-container");
 const suggestionsList = document.getElementById("suggestions-list");
+const favoritesContainer = document.getElementById("favorites-container");
+const favoritesSection = document.getElementById("favorites-section");
+const recentContainer = document.getElementById("recent-container");
+const recentSection = document.getElementById("recent-section");
 
+let favorites = JSON.parse(localStorage.getItem("weather_favorites")) || [];
+let recentSearches = JSON.parse(localStorage.getItem("weather_recent")) || [];
 let activitiesData = null;
 let debounceTimer;
 
@@ -29,7 +35,6 @@ searchBtn.addEventListener("click", () => {
 
 searchInput.addEventListener("input", (e) => {
   const query = e.target.value.trim();
-
   clearTimeout(debounceTimer);
 
   if (query.length > 2) {
@@ -63,7 +68,65 @@ async function loadActivities() {
     const response = await fetch("./activities.json");
     activitiesData = await response.json();
   } catch (error) {
-    console.error("Error cargando actividades:", error);
+    console.error(error);
+  }
+}
+
+function saveToLocalStorage() {
+  localStorage.setItem("weather_favorites", JSON.stringify(favorites));
+  localStorage.setItem("weather_recent", JSON.stringify(recentSearches));
+  renderQuickAccess();
+}
+
+function addToRecent(city) {
+  recentSearches = [
+    city,
+    ...recentSearches.filter((c) => c.name !== city.name),
+  ].slice(0, 5);
+  saveToLocalStorage();
+}
+
+function toggleFavorite(city) {
+  const index = favorites.findIndex((c) => c.name === city.name);
+  if (index > -1) {
+    favorites.splice(index, 1);
+  } else {
+    favorites.push(city);
+  }
+  saveToLocalStorage();
+}
+
+function renderQuickAccess() {
+  if (recentSearches.length > 0) {
+    recentSection.classList.remove("hidden");
+    recentContainer.innerHTML = recentSearches
+      .map(
+        (city) => `
+        <button onclick="loadWeatherData(${city.lat}, ${city.lon}, '${city.name}')"
+                class="text-xs bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-full transition-all flex items-center gap-1">
+            <i class="fa-solid fa-clock-rotate-left opacity-50"></i> ${city.name}
+        </button>
+    `,
+      )
+      .join("");
+  } else {
+    recentSection.classList.add("hidden");
+  }
+
+  if (favorites.length > 0) {
+    favoritesSection.classList.remove("hidden");
+    favoritesContainer.innerHTML = favorites
+      .map(
+        (city) => `
+        <button onclick="loadWeatherData(${city.lat}, ${city.lon}, '${city.name}')"
+                class="text-xs bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-3 py-1 rounded-full transition-all border border-yellow-200 font-medium">
+            ${city.name}
+        </button>
+    `,
+      )
+      .join("");
+  } else {
+    favoritesSection.classList.add("hidden");
   }
 }
 
@@ -78,7 +141,7 @@ async function fetchSuggestions(query) {
     const cities = await response.json();
     renderSuggestions(cities);
   } catch (error) {
-    console.error("Error fetching suggestions:", error);
+    console.error(error);
   }
 }
 
@@ -99,9 +162,12 @@ function renderSuggestions(cities) {
     li.textContent = `${city.name}${state}, ${city.country}`;
 
     li.addEventListener("click", () => {
+      const cityData = { name: city.name, lat: city.lat, lon: city.lon };
       searchInput.value = `${city.name}, ${city.country}`;
       suggestionsList.classList.add("hidden");
-      fetchWeather(city.lat, city.lon, city.name);
+
+      addToRecent(cityData);
+      loadWeatherData(city.lat, city.lon, city.name);
     });
 
     suggestionsList.appendChild(li);
@@ -119,7 +185,7 @@ async function handleSearch(query) {
   }
 }
 
-async function fetchWeather(lat, lon, name) {
+async function loadWeatherData(lat, lon, name) {
   const MAX_RETRIES = 3;
   const RETRY_DELAY = 1000;
 
@@ -137,7 +203,7 @@ async function fetchWeather(lat, lon, name) {
       ]);
 
       if (!weatherRes.ok || !forecastRes.ok)
-        throw new Error("Error en los servidores de clima");
+        throw new Error("Servidores no disponibles");
 
       const weatherData = await weatherRes.json();
       const forecastData = await forecastRes.json();
@@ -150,12 +216,9 @@ async function fetchWeather(lat, lon, name) {
       weatherContainer.classList.remove("hidden");
       return;
     } catch (error) {
-      console.warn(`Intento ${attempt} fallido.`, error);
-
       if (attempt === MAX_RETRIES) {
         loadingIndicator.classList.add("hidden");
-        errorMessage.textContent =
-          "Error al cargar los datos climáticos. Revisa tu conexión.";
+        errorMessage.textContent = "Error de conexión. Intenta de nuevo.";
         errorMessage.classList.remove("hidden");
       } else {
         await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
@@ -165,14 +228,40 @@ async function fetchWeather(lat, lon, name) {
 }
 
 function renderWeather(data) {
-  cityNameEl.textContent = `${data.name}, ${data.sys.country}`;
+  const isFav = favorites.find((c) => c.name === data.name);
+
+  cityNameEl.innerHTML = `
+        ${data.name}
+        <button id="fav-btn" class="ml-2 text-2xl transition-transform hover:scale-125 focus:outline-none">
+            <i class="${
+              isFav ? "fa-solid" : "fa-regular"
+            } fa-star text-yellow-400"></i>
+        </button>
+    `;
+
   tempEl.textContent = `${Math.round(data.main.temp)}°`;
   descEl.textContent = data.weather[0].description;
   humidityEl.textContent = `${data.main.humidity}%`;
   pressureEl.textContent = `${data.main.pressure} hPa`;
   windSpeedEl.textContent = `${data.wind.speed} km/h`;
-
   iconEl.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+
+  const newFavBtn = document.getElementById("fav-btn");
+  newFavBtn.onclick = () => {
+    toggleFavorite({
+      name: data.name,
+      lat: data.coord.lat,
+      lon: data.coord.lon,
+    });
+    renderWeather(data);
+  };
+
+  const now = new Date();
+  dateEl.textContent = now.toLocaleDateString("es-ES", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
 
   renderActivities(data);
 }
@@ -190,10 +279,15 @@ function renderForecast(data) {
     <div class="flex items-center justify-between bg-white/20 p-4 rounded-2xl hover:bg-white/30 transition-all">
       <div class="flex flex-col">
         <span class="font-bold capitalize">
-          ${new Date(item.dt * 1000).toLocaleDateString("es-ES", { weekday: "long" })}
+          ${new Date(item.dt * 1000).toLocaleDateString("es-ES", {
+            weekday: "long",
+          })}
         </span>
         <span class="text-xs text-black/50">
-          ${new Date(item.dt * 1000).toLocaleDateString("es-ES", { day: "numeric", month: "short" })}
+          ${new Date(item.dt * 1000).toLocaleDateString("es-ES", {
+            day: "numeric",
+            month: "short",
+          })}
         </span>
       </div>
 
@@ -236,4 +330,9 @@ function renderActivities(data) {
     .join("");
 }
 
-loadActivities();
+async function init() {
+  await loadActivities();
+  renderQuickAccess();
+}
+
+init();
