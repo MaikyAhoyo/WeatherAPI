@@ -54,9 +54,14 @@ cd weather-app
 - Regístrate en OpenWeatherMap y obtén una clave gratuita.
 - Crea un archivo config.js.
 - Inserta:
-
 ```js
 const config = {
   apiKey: "TU_API_KEY",
 };
 ```
+
+---
+
+## URL de la página hosteada
+
+https://weather-f36w173fe-miguel-arroyos-projects.vercel.app
