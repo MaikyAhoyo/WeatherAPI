@@ -1,13 +1,13 @@
 # Weather App - OpenWeather API
 
-Aplicación de clima moderna, minimalista y responsiva construida con **Vanilla JavaScript** y **Tailwind CSS**.  
+Aplicación de clima moderna, minimalista y responsiva construida con **Vanilla JavaScript** y **Tailwind CSS**.
 Permite obtener información meteorológica en tiempo real de cualquier ciudad del mundo utilizando la API de OpenWeather.
 
 ---
 
 ## Características
 
-- **Búsqueda inteligente**  
+- **Búsqueda inteligente**
   Utiliza el API de Geocoding de OpenWeather para obtener coordenadas precisas.
 
 - **Datos en tiempo real**
@@ -54,6 +54,7 @@ cd weather-app
 - Regístrate en OpenWeatherMap y obtén una clave gratuita.
 - Crea un archivo config.js.
 - Inserta:
+
 ```js
 const config = {
   apiKey: "TU_API_KEY",
@@ -65,3 +66,7 @@ const config = {
 ## URL de la página hosteada
 
 https://weather-f36w173fe-miguel-arroyos-projects.vercel.app
+
+### Preview
+
+![Vista previa de La aplicación](assets/preview.png)
